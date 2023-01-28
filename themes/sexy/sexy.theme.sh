@@ -33,6 +33,15 @@ else
     RESET="\033[m"
 fi
 
+# Determine active Python virtualenv details.
+function set_virtualenv () {
+  if test -z "$VIRTUAL_ENV" ; then
+      PYTHON_VIRTUALENV=""
+  else
+      PYTHON_VIRTUALENV="${PURPLE}[`basename \"$VIRTUAL_ENV\"`]${COLOR_NONE} "
+  fi
+}
+
 parse_git_dirty () {
   [[ $(git status 2> /dev/null | tail -n1 | cut -c 1-17) != "nothing to commit" ]] && echo "*"
 }
@@ -41,7 +50,8 @@ parse_git_branch () {
 }
 
 function _omb_theme_PROMPT_COMMAND() {
-  PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
+  set_virtualenv
+  PS1="${PYTHON_VIRTUALENV}\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
 }
 
 _omb_util_add_prompt_command _omb_theme_PROMPT_COMMAND
